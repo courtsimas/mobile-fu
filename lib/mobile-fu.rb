@@ -20,6 +20,8 @@ module ActionController
     end
 
     module ClassMethods
+      
+      def ignored_formats; @@ignored_formats; end
 
       # Add this to one of your controllers to use MobileFu.
       #
@@ -34,9 +36,12 @@ module ActionController
       #      has_mobile_fu false
       #    end
       #
-      def has_mobile_fu(set_request_format = true)
+      def has_mobile_fu(options = {})
         include ActionController::MobileFu::InstanceMethods
-
+        
+        @@ignored_formats = options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
+        set_request_format = options.has_key?(:set_request_format) ? options[:set_request_format] : true
+        
         before_filter :set_request_format if set_request_format
 
         helper_method :is_mobile_device?
@@ -70,6 +75,7 @@ module ActionController
 
       # Forces the request format to be :mobile
       def force_mobile_format
+        return if should_ignore_format
         unless request.xhr?
           request.format = :mobile
           session[:mobile_view] = true if session[:mobile_view].nil?
@@ -80,8 +86,10 @@ module ActionController
       # the user has opted to use either the 'Standard' view or 'Mobile' view.
 
       def set_mobile_format
+        return if should_ignore_format
+        
         if !mobile_exempt? && is_mobile_device? && !request.xhr?
-          request.format = session[:mobile_view] == false ? :html : :mobile
+          request.format = session[:mobile_view] == false ? request.format : :mobile
           session[:mobile_view] = true if session[:mobile_view].nil?
         end
       end
@@ -117,6 +125,12 @@ module ActionController
       
       def mobile_exempt?
         self.class.instance_variable_get("@mobile_exempt_actions").try(:include?, params[:action].to_sym)
+      end
+      
+      # Check if the current format needs to be ignored
+      
+      def should_ignore_format
+        return self.class.ignored_formats.include?(request.format.to_sym) 
       end
     end
   end
