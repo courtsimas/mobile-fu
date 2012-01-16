@@ -75,6 +75,22 @@ Inspiration for Mobile Fu came from [Noel Rappin's rails_iui](http://blogs.pathf
 
 Hopefully this should help you create some awesome mobile applications.
 
+Ignoring specific request formats
+------------------------
+If you want to ignore certain request format
+
+    class ApplicationController < ActionController::Base
+      has_mobile_fu :ignore_formats => [:json]
+    end
+
+Ignoring specific controller actions
+------------------------
+If you want to have mobile-fu not run for specific actions within a controller
+
+    class AwesomebbqsauceController < ActionController::Base
+      has_no_mobile_fu_for :create, :update, :some_other_action 
+    end
+    
 Testing Mobile Interface
 ------------------------
 

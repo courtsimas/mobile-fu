@@ -1,3 +1,15 @@
+commit c6bb207a6135046e586480e7e976e75f4a8f46e3
+Author: Court Simas <courtsimas@gmail.com>
+Date:   Sat Jan 16 11:52:23 2012 -0600
+
+    Added ability to ignore formats, thanks to refaelos's version
+
+commit ceb30a5df78b59ec3254fc56e5e90ff3cd806c35
+Author: Court Simas <courtsimas@gmail.com>
+Date:   Sat Jan 16 11:39:42 2012 -0600
+
+    Forked benlangfeld's has_no_mobile_fu enhanced mobile-fu gem. Fixed a stylesheet issue in rails 3.1+
+
 commit a46e0d5ff0a95407bbd8f3437a372ced53d90c9b
 Author: Brendan G. Lim <brendan@intridea.com>
 Date:   Sat Dec 20 20:59:49 2008 -0500
