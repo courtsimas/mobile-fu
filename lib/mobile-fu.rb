@@ -8,6 +8,20 @@ module MobileFu
     initializer "mobile-fu.configure" do |app|
       app.config.middleware.use Rack::MobileDetect
     end
+    if Rails::VERSION::MAJOR >= 3
+      initializer "mobile-fu.action_controller" do |app|
+        ActiveSupport.on_load :action_controller do
+          include ActionController::MobileFu
+        end
+      end
+
+      initializer "mobile-fu.action_view" do |app|
+        ActiveSupport.on_load :action_view do
+          include MobileFu::Helper
+          alias_method_chain :stylesheet_link_tag, :mobilization
+        end
+      end
+    end
     Mime::Type.register_alias "text/html", :mobile
   end
 end
@@ -134,9 +148,10 @@ module ActionController
       end
     end
   end
-
 end
 
-ActionController::Base.send :include, ActionController::MobileFu
-ActionView::Base.send :include, MobileFu::Helper
-#ActionView::Base.send :alias_method_chain, :stylesheet_link_tag, :mobilization
+if Rails::VERSION::MAJOR < 3
+  ActionController::Base.send :include, ActionController::MobileFu
+  ActionView::Base.send :include, MobileFu::Helper
+  ActionView::Base.send :alias_method_chain, :stylesheet_link_tag, :mobilization
+end
