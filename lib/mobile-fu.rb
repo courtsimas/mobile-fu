@@ -144,6 +144,7 @@ module ActionController
       # Check if the current format needs to be ignored
       
       def should_ignore_format
+        return true if request.format.nil?
         return self.class.ignored_formats.include?(request.format.to_sym) 
       end
     end
