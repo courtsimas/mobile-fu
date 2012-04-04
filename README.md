@@ -22,12 +22,12 @@ Add this this one line to the controller.
 
 Once this is in place, any request that comes from a mobile device will be be
 set as :mobile format.  It is up to you to determine how you want to handle
-these requests.  It is also up to you to create the .mobile.erb versions of
+these requests.  It is also up to you to create the .mobile.erb or .mobile.haml versions of
 your views that are to be requested.
 
-Then add the line below to config/initializers/mime_types.rb
-
-    Mime::Type.register_alias "text/html", :mobile
+Mobile Fu automatically adds a new `:mobile` to `text/html` mime type 
+alias for Rails apps. If you already have a custom `:mobile` alias registered in 
+  `config/initializers/mime_types.rb`, you can remove that.
 
 I recommend that you setup a before_filter that will redirect to a specific page
 depending on whether or not it is a mobile request.  How can you check this?
@@ -50,7 +50,7 @@ baked in to Mobile Fu.
 
 If you are including a css or sass file via `stylesheet_link_tag`, all you have
 to do is add _device to the name of one of your files to override your styling
-for a certain device.  The stylesheet that is loaded is dependant on which device
+for a certain device.  The stylesheet that is loaded is dependent on which device
 is making the request.
 
   e.g., Accessing a page from a Blackberry.
