@@ -1,11 +1,11 @@
 require 'spec_helper'
 
-describe MobileFu::MobilizedStyles do
+describe MobileFu do
 
   before(:each) do
     @view = mock :ActionView
     @request = mock :ActionRequest
-    @view.extend MobileFu::MobilizedStyles
+    @view.extend MobileFu:
     @view.stub!(:request).and_return @request
     @request.stub! :user_agent
   end
