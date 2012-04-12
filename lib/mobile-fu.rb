@@ -58,7 +58,7 @@ module ActionController
         
         @@ignored_formats = options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
         set_request_format = options.has_key?(:set_request_format) ? options[:set_request_format] : true
-        
+
         before_filter :set_request_format if set_request_format
 
         helper_method :is_mobile_device?
@@ -94,7 +94,7 @@ module ActionController
 
       # Forces the request format to be :mobile
       def force_mobile_format
-        return if should_ignore_format
+        return if should_ignore_format || mobile_exempt?
         
         unless request.xhr?
           request.format = :mobile
@@ -105,7 +105,7 @@ module ActionController
       
       # Forces the request format to be :tablet
       def force_tablet_format
-        return if should_ignore_format
+        return if should_ignore_format || mobile_exempt?
         
         unless request.xhr?
           request.format = :tablet
