@@ -69,16 +69,16 @@ module ActionController
         helper_method :mobile_device
       end
       
-      # Add this to your controllers to prevent the mobile format from being set for specific actions
+      # Add this to your controllers to prevent the mobile or tablet format from being set for specific actions
       #   class AwesomeController < ApplicationController
       #     has_no_mobile_fu_for :index
       #     
       #     def index
-      #       # Mobile format will not be set, even if user is on a mobile device
+      #       # Mobile or tablet format will not be set, even if user is on a mobile device
       #     end
       #     
       #     def show
-      #       # Mobile format will be set as normal here if user is on a mobile device
+      #       # Mobile or tablet format will be set as normal here if user is on a mobile device
       #     end
       #   end
       def has_no_mobile_fu_for(*actions)
@@ -120,10 +120,10 @@ module ActionController
         return if should_ignore_format
         
         if !mobile_exempt? && is_mobile_device? && !request.xhr?
-          request.format = session[:mobile_view] == false ? request.format : :mobile
+          request.format = :mobile unless session[:mobile_view] == false
           session[:mobile_view] = true if session[:mobile_view].nil?
         elsif !mobile_exempt? && is_tablet_device? && !request.xhr?
-          request.format = session[:tablet_view] == false ? request.format : :tablet
+          request.format = :tablet unless session[:tablet_view] == false
           session[:tablet_view] = true if session[:tablet_view].nil?
         end
       end
@@ -166,7 +166,7 @@ module ActionController
         request.user_agent.to_s.downcase.include? type.to_s.downcase
       end
       
-      # Returns true if current action isn't supposed to use mobile format
+      # Returns true if current action isn't supposed to use mobile or tablet format
       # See #has_no_mobile_fu_for
       
       def mobile_exempt?
