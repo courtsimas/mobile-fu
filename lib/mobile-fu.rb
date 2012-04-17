@@ -52,15 +52,21 @@ module ActionController
       #    class ApplicationController < ActionController::Base
       #      has_mobile_fu false
       #    end
+      # If you want to force the mobile view for testing, pass in true
+      #
+      #    class ApplicationController < ActionController::Base
+      #      has_mobile_fu true
+      #    end
       #
       def has_mobile_fu(options = {})
         include ActionController::MobileFu::InstanceMethods
         
-        @@ignored_formats = options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
-        set_request_format = options.has_key?(:set_request_format) ? options[:set_request_format] : true
-
-        before_filter :set_request_format if set_request_format
-
+        
+        @@ignored_formats = options.is_a?(Hash) && options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
+        set_request_format = options.is_a?(Hash) && options.has_key?(:set_request_format) ? options[:set_request_format] : true
+        before_filter :force_mobile_format if !options.is_a?(Hash) && options == true
+        before_filter :set_request_format if set_request_format && options != false
+        
         helper_method :is_mobile_device?
         helper_method :is_tablet_device?
         helper_method :in_mobile_view?
