@@ -158,7 +158,8 @@ module ActionController
       end
       
       def is_tablet_device?
-        request.user_agent.to_s.downcase =~ Regexp.new(ActionController::MobileFu::TABLET_USER_AGENTS)
+        request.user_agent.to_s.downcase.match(ActionController::MobileFu::TABLET_USER_AGENTS).present?
+        #request.user_agent.to_s.downcase =~ Regexp.new(ActionController::MobileFu::TABLET_USER_AGENTS)
       end
 
       def mobile_device
