@@ -52,15 +52,21 @@ module ActionController
       #    class ApplicationController < ActionController::Base
       #      has_mobile_fu false
       #    end
+      # If you want to force the mobile view for testing, pass in true
+      #
+      #    class ApplicationController < ActionController::Base
+      #      has_mobile_fu true
+      #    end
       #
       def has_mobile_fu(options = {})
         include ActionController::MobileFu::InstanceMethods
         
-        @@ignored_formats = options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
-        set_request_format = options.has_key?(:set_request_format) ? options[:set_request_format] : true
-
-        before_filter :set_request_format if set_request_format
-
+        
+        @@ignored_formats = options.is_a?(Hash) && options.has_key?(:ignore_formats) ? options[:ignore_formats] : []
+        set_request_format = options.is_a?(Hash) && options.has_key?(:set_request_format) ? options[:set_request_format] : true
+        before_filter :force_mobile_format if !options.is_a?(Hash) && options == true
+        before_filter :set_request_format if set_request_format && options != false
+        
         helper_method :is_mobile_device?
         helper_method :is_tablet_device?
         helper_method :in_mobile_view?
@@ -122,7 +128,7 @@ module ActionController
         if !mobile_exempt? && is_mobile_device? && !request.xhr?
           request.format = :mobile unless session[:mobile_view] == false
           session[:mobile_view] = true if session[:mobile_view].nil?
-        elsif !mobile_exempt? && is_tablet_device? && !request.xhr?
+        elsif !mobile_exempt? && is_tablet_device? && !request.xhr? && !is_ignored?(:tablet)
           request.format = :tablet unless session[:tablet_view] == false
           session[:tablet_view] = true if session[:tablet_view].nil?
         end
@@ -152,7 +158,8 @@ module ActionController
       end
       
       def is_tablet_device?
-        request.user_agent.to_s.downcase =~ Regexp.new(ActionController::MobileFu::TABLET_USER_AGENTS)
+        request.user_agent.to_s.downcase.match(ActionController::MobileFu::TABLET_USER_AGENTS).present?
+        #request.user_agent.to_s.downcase =~ Regexp.new(ActionController::MobileFu::TABLET_USER_AGENTS)
       end
 
       def mobile_device
@@ -178,6 +185,13 @@ module ActionController
       def should_ignore_format
         return true if request.format.nil?
         return self.class.ignored_formats.include?(request.format.to_sym) 
+      end
+      
+      # Check the request.format passed in against the ignore list
+      
+      def is_ignored?(request_format = nil)
+        return false if request_format.nil?
+        return self.class.ignored_formats.include?(request_format.to_sym)
       end
     end
   end

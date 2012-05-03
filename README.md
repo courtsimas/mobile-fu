@@ -89,6 +89,15 @@ If you want to ignore certain request format
     class ApplicationController < ActionController::Base
       has_mobile_fu :ignore_formats => [:json]
     end
+    
+or if you want to permanently ignore tablet
+    class ApplicationController < ActionController::Base
+      has_mobile_fu :ignore_formats => [:tablet]
+    end
+
+If you want to check a format against the ignore list (returns `true` or `false`)
+
+    is_ignored?(:json)
 
 Ignoring specific controller actions
 ------------------------
@@ -102,11 +111,15 @@ Testing Mobile Interface
 ------------------------
 
 If you want to force the mobile interface for testing, you can either use a
-mobile device emulator, or you can call `force_mobile_format` in a before filter.
+mobile device emulator, or you can call `force_mobile_format` in a before filter or simply pass true.
 
     class ApplicationController < ActionController::Base
       has_mobile_fu
       before_filter :force_mobile_format
+    end
+    
+    class ApplicationController < ActionController::Base
+      has_mobile_fu true
     end
 
 You can also force the tablet view by calling `force_tablet_format` instead
@@ -116,5 +129,10 @@ You can also force the tablet view by calling `force_tablet_format` instead
       before_filter :force_tablet_format
     end
 
+If you don't want mobile_fu to set the request format automatically, you can pass false.
+
+    class ApplicationController < ActionController::Base
+      has_mobile_fu false
+    end
 
 Copyright (c) 2008 Brendan G. Lim, Intridea, Inc., released under the MIT license
