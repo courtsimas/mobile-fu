@@ -128,7 +128,7 @@ module ActionController
         if !mobile_exempt? && is_mobile_device? && !request.xhr?
           request.format = :mobile unless session[:mobile_view] == false
           session[:mobile_view] = true if session[:mobile_view].nil?
-        elsif !mobile_exempt? && is_tablet_device? && !request.xhr?
+        elsif !mobile_exempt? && is_tablet_device? && !request.xhr? && !is_ignored?(:tablet)
           request.format = :tablet unless session[:tablet_view] == false
           session[:tablet_view] = true if session[:tablet_view].nil?
         end
@@ -185,6 +185,13 @@ module ActionController
       def should_ignore_format
         return true if request.format.nil?
         return self.class.ignored_formats.include?(request.format.to_sym) 
+      end
+      
+      # Check the request.format passed in against the ignore list
+      
+      def is_ignored?(request_format = nil)
+        return false if request_format.nil?
+        return self.class.ignored_formats.include?(request_format.to_sym)
       end
     end
   end
