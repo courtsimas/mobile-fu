@@ -88,9 +88,10 @@ If you want to ignore certain request format
 
     class ApplicationController < ActionController::Base
       has_mobile_fu :ignore_formats => [:json]
-    end
+    end  
     
-or if you want to permanently ignore tablet
+you can even permanently ignore tablet request formats (tablets will default to html)
+
     class ApplicationController < ActionController::Base
       has_mobile_fu :ignore_formats => [:tablet]
     end
